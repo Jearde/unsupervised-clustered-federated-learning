@@ -5,4 +5,4 @@ This code is a simple example of simulated Unsupervised Clustered Federated Lear
 
 and
 
-[A. Nelus, R. Glitza, and R. Martin, “Unsupervised Clustered Federated Learning in Complex Multi-source Acoustic Environments,” accepted at EUSIPCO 21, 2021.]()
+[A. Nelus, R. Glitza, and R. Martin, “Unsupervised Clustered Federated Learning in Complex Multi-source Acoustic Environments,” accepted at EUSIPCO 21, 2021.](https://arxiv.org/abs/2106.03671)

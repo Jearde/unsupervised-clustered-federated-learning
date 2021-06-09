@@ -1,0 +1,92 @@
+paths:
+  room: SINS_1
+  audio-dir: ./databases/LibriSpeech/train-clean-100_vad # Path to audio files
+  meta-dir: ./databases/LibriSpeech/SPEAKERS.TXT # Path to speaker description file
+  ir-meta-dir: ./databases/CATT/SINS/OUT/SINS_1.MAT # Path to CATT-A's exported MATLAB file
+  experiments-dir: ./experiments # Path to save experiments in
+
+logger:
+  save-output: True
+  logger-dir: ./experiments/notebook
+
+thresholds:
+  eps_3: 0.84
+  min_rounds: 1
+  no_split_rounds: 2
+  mv_weight: 0.5
+  mv_threshold: 0
+
+seeds:
+  random-seed: 42 # Same seed for all random methods
+
+lmbe:
+  sr: 16000
+  length: 80000 # Length of feature in samples (5s)
+  n_fft: 1024
+  hop_length: 512
+  n_mels: 128
+  fmin: 20
+  fmax: 16000
+  top_db: 80
+  vad: False
+
+lmbe2:
+  sr: 16000
+  length: 160000
+  # length_lmbe: 68
+  n_fft: 1024
+  hop_length: 320
+  n_mels: 40
+  fmin: 50
+  fmax: 16000
+  top_db: 80
+  vad: False
+  no_change: True       # Do not reshape features
+
+server:
+  # Training
+  network: ConvAE3      # Network used for this device (ConvNet, ConvAE1, ConvAE2, ConvAE3)
+  batch_size: 100       # training batch size
+  learning_rate: 0.1    # 2e-4
+  epochs: 300           # number of max epochs
+  patience: 7           # epochs wait before lowering learning rate
+  optimizer: SGD        # loss function optimizer SGD/Adam
+  momentum: 0.9
+  save/load: True       # Load checkpoint on creation and save on evaluation
+  save_epochs: 50       # Save PytTorch model every x epochs
+  model_name: AE3       # Load model_name.pth instead
+  train_frac: 0.8       # Size for traing set: n_tain = train_frac, n_test = 1-train_frac
+  use_all: False        # Use also speakers from clients
+  max_data: 5000        # Maximum data to use for training
+  normalize: True       # Normalize mixed signal to 1
+  feature: lmbe         # Custom feature
+  shuffle_train: True   # Shuffle trainings Dataloader
+  shuffle_test: False   # Shuffle evaluation Dataloader
+  ratio: 0.6            # Split ratio of speakers between clients and server if gender_diff==True
+  layer_zero: bottleneck1 # Sets weights of layer to zero
+
+client:
+  # General
+  n_clientes: -1            # Number of nodes
+  # Training
+  batch_size: 2            # Training batch size
+  learning_rate: 5.0        # Start learning rate
+  epochs: 1                 # Number of epochs each nodes trains per communication round
+  patience: 1               # epochs wait before lowering learning rate
+  save/load: False          # Load checkpoint on creation and save on evaluation
+  save_epochs: 1000         # Save PytTorch model every x epochs
+  train_frac: 0.8           # Size for traing set: n_tain = train_frac, n_test = 1-train_frac
+  gender_diff: True         # Sources must have different gender
+  gender_same: False        # Sources must have the same gender (do not use when gender_diff=True)
+  normalize: True           # Normalize mixed signal to 1
+  feature: lmbe             # Custom feature
+  shuffle_train: False      # Shuffle trainings Dataloader
+  shuffle_test: False       # Shuffle evaluation Dataloader
+  max_data: 2              # Max data to use in training per communication round
+  norm_utt: None            # Normalize Utterance before mixing (normalize, standardize)
+  # Clustering
+  communication_rounds: 35  # How many federated communication rounds, recommend (no_nodes - 1)
+  layer: bottleneck1        # Of not None use only this layer for clustering
+  layer_zero: bottleneck1   # Sets weights of layer to zero
+  dW_stop: 100              # End weights here used for k/c-means
+  num_agg_clusters: 2       # Hierarchical clustering with partitioning of n clusters
